@@ -1,6 +1,7 @@
 #lang racket
 
-(require request/check
+(require rackunit
+         request/check
          "config.rkt")
 
 (define auth-requester
@@ -13,15 +14,17 @@
 
 
 (module+ test
-  (with-requester backend-requester
-    (check-get "" "Hello!")
-    (check-delete "database" "Bad idea!")
-    (check-post "post-test" #"foo" "POSTed payload: foo")
-    (check-put "put-test" #"foo" "PUTed payload: foo")
-    (check-get "query-string-test?foo=bar" "Query param: bar"))
-  (with-requester auth-requester
-    (check-get "" "Hello!")
-    (check-delete "database" "Bad idea!")
-    (check-post "post-test" #"foo" "POSTed payload: foo")
-    (check-put "put-test" #"foo" "PUTed payload: foo")
-    (check-get "query-string-test?foo=bar" "Query param: bar")))
+  (test-case "Backend requests - no auth"
+    (with-requester backend-requester
+      (check-get "" "Hello!")
+      (check-delete "database" "Bad idea!")
+      (check-post "post-test" #"foo" "POSTed payload: foo")
+      (check-put "put-test" #"foo" "PUTed payload: foo")
+      (check-get "query-string-test?foo=bar" "Query param: bar")))
+  (test-case "Auth requests"
+    (with-requester auth-requester
+      (check-get "" "Hello!")
+      (check-delete "database" "Bad idea!")
+      (check-post "post-test" #"foo" "POSTed payload: foo")
+      (check-put "put-test" #"foo" "PUTed payload: foo")
+      (check-get "query-string-test?foo=bar" "Query param: bar"))))
