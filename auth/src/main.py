@@ -13,18 +13,37 @@ allowed_methods = [
 ]
 
 
+def target_service_url(path):
+    return "http://" + TARGET_SERVICE_HOST + "/" + path
+
+
+def proxy_pass_method(location, method_func):
+    return method_func(
+        location,
+        params=request.args
+    ).content
+
+
+def proxy_pass_method_with_body(location, method_func):
+    return method_func(
+        location,
+        data=request.get_data(),
+        params=request.args
+    ).content
+
+
 @app.route('/', defaults={'path': ''}, methods=allowed_methods)
 @app.route('/<path:path>', methods=allowed_methods)
 def catch_all(path):
-    target_url = "http://" + TARGET_SERVICE_HOST + "/" + path
+    target_url = target_service_url(path)
     if request.method == "GET":
-        return get(target_url).content
+        return proxy_pass_method(target_url, get)
     if request.method == "PUT":
-        return put(target_url, data=request.get_data()).content
+        return proxy_pass_method_with_body(target_url, put)
     if request.method == "POST":
-        return post(target_url, data=request.get_data()).content
+        return proxy_pass_method_with_body(target_url, post)
     if request.method == "DELETE":
-        return delete(target_url).content
+        return proxy_pass_method(target_url, delete)
 
 
 if __name__ == "__main__":

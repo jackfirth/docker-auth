@@ -19,5 +19,8 @@
 (patch "/patch-test" (lambda (req)
   (string-append "PATCHed payload: " (request-body req))))
 
+(get "/query-string-test" (lambda (req)
+  (string-append "Query param: " (params req 'foo))))
+
 (module+ main
   (run #:listen-ip #f))
