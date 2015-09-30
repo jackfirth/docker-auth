@@ -1,3 +1,9 @@
+sut:
+  build: ./test
+  links:
+    - db
+    - auth
+
 db:
   build: ./db
   environment:
