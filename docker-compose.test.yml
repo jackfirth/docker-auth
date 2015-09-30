@@ -3,6 +3,8 @@ sut:
   links:
     - db
     - auth
+  environment:
+    AUTH_SERVICE_DOMAIN: auth:8000
 
 db:
   build: ./db
@@ -14,6 +16,12 @@ auth:
   build: ./auth
   links:
     - db
+    - example-backend
   environment:
     DB_USER: auth
     DB_PASSWORD: auth
+    TARGET_SERVICE_HOST: example-backend:8000
+    DEBUG_MODE: true
+
+example-backend:
+  build: ./example-backend
