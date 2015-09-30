@@ -8,6 +8,6 @@ auth:
   build: ./auth
   links:
     - db
-  env:
+  environment:
     DB_USER: auth
     DB_PASSWORD: auth
