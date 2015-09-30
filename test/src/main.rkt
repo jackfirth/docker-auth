@@ -10,4 +10,4 @@
 
 (module+ test
   (with-requester auth-requester
-    (check-get-not-exn "/")))
+    (check-get "/" "Hello!")))
