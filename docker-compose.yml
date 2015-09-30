@@ -8,12 +8,12 @@ auth:
   build: ./auth
   links:
     - db
-    - example-backend
+    - backend
   environment:
     DB_USER: auth
     DB_PASSWORD: auth
-    TARGET_SERVICE_HOST: example-backend:8000
+    TARGET_SERVICE_HOST: backend:8000
     DEBUG_MODE: false
 
-example-backend:
+backend:
   build: ./example-backend
