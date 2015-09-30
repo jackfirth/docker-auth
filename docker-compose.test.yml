@@ -3,8 +3,10 @@ sut:
   links:
     - db
     - auth
+    - backend
   environment:
     AUTH_SERVICE_DOMAIN: auth:8000
+    BACKEND_SERVICE_DOMAIN: backend:8000
 
 db:
   build: ./db

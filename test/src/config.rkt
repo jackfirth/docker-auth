@@ -2,4 +2,6 @@
 
 (require envy)
 
-(define/provide-environment auth-service-domain)
+(define/provide-environment
+  auth-service-domain
+  backend-service-domain)
