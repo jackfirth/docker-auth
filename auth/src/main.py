@@ -20,16 +20,23 @@ def target_service_url(path):
 def catch_all(path):
     def forward_request_as_identity(identity):
         target_url = target_service_url(path)
+        new_headers = {"Identity": identity}
+        auth_request = proxy_request(target_url, new_headers)
+        auth_request_with_body = proxy_request_with_body(
+            target_url,
+            new_headers
+        )
         if request.method == "GET":
-            return proxy_request(target_url, get)
+            return auth_request(get)
         if request.method == "PUT":
-            return proxy_request_with_body(target_url, put)
+            return auth_request_with_body(put)
         if request.method == "POST":
-            return proxy_request_with_body(target_url, post)
+            return auth_request_with_body(post)
         if request.method == "DELETE":
-            return proxy_request(target_url, delete)
+            return auth_request(delete)
         if request.method == "PATCH":
-            return proxy_request_with_body(target_url, patch)
+            return auth_request_with_body(patch)
+
     return with_authenticated_identity(forward_request_as_identity)
 
 if __name__ == "__main__":

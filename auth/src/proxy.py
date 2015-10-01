@@ -1,4 +1,4 @@
-from pyramda import compose
+from pyramda import compose, curry
 from flask import request
 
 
@@ -17,16 +17,20 @@ def proxy_route(app):
     )
 
 
-def proxy_request(location, request_func):
+@curry
+def proxy_request(location, headers, request_func):
     return request_func(
         location,
-        params=request.args
+        params=request.args,
+        headers=headers
     ).content
 
 
-def proxy_request_with_body(location, request_func):
+@curry
+def proxy_request_with_body(location, headers, request_func):
     return request_func(
         location,
         data=request.get_data(),
-        params=request.args
+        params=request.args,
+        headers=headers
     ).content

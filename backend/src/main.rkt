@@ -25,7 +25,7 @@
 (get "/identity-test" (lambda (req)
   (define identity (headers-assq* #"Identity" (request-headers/raw req)))
   (if identity
-      (string-append "Identity header: " (bytes->string/utf-8 identity))
+      (string-append "Identity header: " (bytes->string/utf-8 (header-value identity)))
       (string-append "No identity header"))))
 
 (module+ main
