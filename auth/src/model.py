@@ -13,8 +13,8 @@ Base = declarative_base(metadata=meta)
 class UserAuth(Base):
     __tablename__ = 'user_auths'
     id = Column(Integer, primary_key=True)
-    email = Column(String(1000))
-    password = Column(String(1000))
+    email = Column(String(1000), unique=True, nullable=False)
+    password = Column(String(1000), nullable=False)
 
 
 def create_tables():

@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import request
-from requests import get, put, post, delete
+from requests import get, put, post, delete, patch
 from config import TARGET_SERVICE_HOST, DEBUG_MODE
 from proxy import \
     proxy_route, \
@@ -28,6 +28,8 @@ def catch_all(path):
             return proxy_request_with_body(target_url, post)
         if request.method == "DELETE":
             return proxy_request(target_url, delete)
+        if request.method == "PATCH":
+            return proxy_request_with_body(target_url, patch)
     return with_authenticated_identity(forward_request_as_identity)
 
 if __name__ == "__main__":
