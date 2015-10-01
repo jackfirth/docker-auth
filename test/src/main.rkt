@@ -12,12 +12,17 @@
   (make-domain-requester auth-service-domain
                          http-requester/exn))
 
-(define auth-proxy-requester
+(define auth-proxy-requester/basic
   (add-requester-headers '("Authorization: Basic foo@bar.com:password")
                          auth-base-requester))
 
+(define auth-proxy-requester/jwt
+  (add-requester-headers (list (string-append "Authorization: Bearer " test-jwt))
+                         auth-base-requester))
+
 (define json-requester
-  (compose (add-requester-headers '("Content-Type: application/json") _)
+  (compose (add-requester-headers '("Content-Type: application/json"
+                                    "Accept: application/json") _)
            (wrap-requester-body jsexpr->bytes/utf-8 _)
            (wrap-requester-response string->jsexpr _)))
 
@@ -44,7 +49,14 @@
   (test-case "Auth requests"
     (with-requester auth-api-requester
       (check-post-not-exn "signup" (hash 'email "foo@bar.com" 'password "password")))
-    (with-requester auth-proxy-requester
+    (with-requester auth-proxy-requester/basic
+      (check-get "" "Hello!")
+      (check-delete "database" "Bad idea!")
+      (check-post "post-test" #"foo" "POSTed payload: foo")
+      (check-put "put-test" #"foo" "PUTed payload: foo")
+      (check-get "query-string-test?foo=bar" "Query param: bar")
+      (check-get "identity-test" "Identity header: Email foo@bar.com"))
+    (with-requester auth-proxy-requester/jwt
       (check-get "" "Hello!")
       (check-delete "database" "Bad idea!")
       (check-post "post-test" #"foo" "POSTed payload: foo")

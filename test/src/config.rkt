@@ -4,4 +4,5 @@
 
 (define/provide-environment
   auth-service-domain
-  backend-service-domain)
+  backend-service-domain
+  test-jwt)

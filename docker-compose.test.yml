@@ -7,6 +7,7 @@ sut:
   environment:
     AUTH_SERVICE_DOMAIN: auth:8000
     BACKEND_SERVICE_DOMAIN: backend:8000
+    TEST_JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZW1haWwiOiJmb29AYmFyLmNvbSJ9.bgSB8w3HW-LIDllCIOVedS9U3yr9AlWSuhEDgGvulpM
 
 db:
   build: ./db
@@ -26,6 +27,7 @@ auth:
     DB_SCHEMA: authentication
     TARGET_SERVICE_HOST: backend:8000
     DEBUG_MODE: true
+    JWT_SECRET: secret
   ports:
     - "8000:8000"
 
