@@ -3,4 +3,5 @@
 (define deps
   '("base"
     "request"
+    "fancy-app"
     "envy"))

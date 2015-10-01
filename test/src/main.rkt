@@ -1,13 +1,30 @@
 #lang racket
 
-(require rackunit
+(require fancy-app
+         json
+         rackunit
          request/check
          "config.rkt")
 
-(define auth-requester
+(define jsexpr->bytes/utf-8 (compose string->bytes/utf-8 jsexpr->string))
+
+(define auth-base-requester
+  (make-domain-requester auth-service-domain
+                         http-requester/exn))
+
+(define auth-proxy-requester
   (add-requester-headers '("Authorization: Basic foo@bar.com:password")
-                         (make-domain-requester auth-service-domain
-                                                http-requester/exn)))
+                         auth-base-requester))
+
+(define json-requester
+  (compose (add-requester-headers '("Content-Type: application/json") _)
+           (wrap-requester-body jsexpr->bytes/utf-8 _)
+           (wrap-requester-response string->jsexpr _)))
+
+(define auth-api-requester
+  (wrap-requester-location (string-append "auth/" _)
+                           (json-requester auth-base-requester)))
+
 
 (define backend-requester
   (make-domain-requester backend-service-domain
@@ -25,7 +42,9 @@
       (check-get "identity-test" "No identity header")))
   (sleep 5)
   (test-case "Auth requests"
-    (with-requester auth-requester
+    (with-requester auth-api-requester
+      (check-post-not-exn "signup" (hash 'email "foo@bar.com" 'password "password")))
+    (with-requester auth-proxy-requester
       (check-get "" "Hello!")
       (check-delete "database" "Bad idea!")
       (check-post "post-test" #"foo" "POSTed payload: foo")
