@@ -6,6 +6,8 @@ from proxy import \
     proxy_route, \
     proxy_request, \
     proxy_request_with_body
+from authenticate import with_authenticated_identity
+from model import initialize_database
 
 app = Flask(__name__)
 
@@ -16,16 +18,18 @@ def target_service_url(path):
 
 @proxy_route(app)
 def catch_all(path):
-    target_url = target_service_url(path)
-    if request.method == "GET":
-        return proxy_request(target_url, get)
-    if request.method == "PUT":
-        return proxy_request_with_body(target_url, put)
-    if request.method == "POST":
-        return proxy_request_with_body(target_url, post)
-    if request.method == "DELETE":
-        return proxy_request(target_url, delete)
-
+    def forward_request_as_identity(identity):
+        target_url = target_service_url(path)
+        if request.method == "GET":
+            return proxy_request(target_url, get)
+        if request.method == "PUT":
+            return proxy_request_with_body(target_url, put)
+        if request.method == "POST":
+            return proxy_request_with_body(target_url, post)
+        if request.method == "DELETE":
+            return proxy_request(target_url, delete)
+    return with_authenticated_identity(forward_request_as_identity)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    initialize_database()
+    app.run(host='0.0.0.0', port=8000, debug=True, use_reloader=False)
