@@ -7,7 +7,7 @@ from proxy import \
     proxy_request, \
     proxy_request_with_body
 from authenticate import with_authenticated_identity
-from model import initialize_database
+from db import initialize_database
 
 app = Flask(__name__)
 

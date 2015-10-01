@@ -1,6 +1,6 @@
-from session import with_session
 from pyramda import curry, compose
-from model import UserAuth
+from .session import with_session
+from .model import UserAuth
 
 
 @curry

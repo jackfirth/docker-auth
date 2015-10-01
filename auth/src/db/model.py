@@ -4,9 +4,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import MetaData, Column, Integer, String
 from sqlalchemy.exc import OperationalError
 from config import DB_SCHEMA
-from engine import engine
-from session import with_session
-from create_model import create_model
+from .engine import engine
+from .session import with_session
+from .create_model import create_model
 
 
 meta = MetaData(schema=DB_SCHEMA)

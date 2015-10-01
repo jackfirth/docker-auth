@@ -1,5 +1,5 @@
 from flask import request
-from auth_db import is_valid_user_email_and_password
+from db import is_valid_user_email_and_password
 
 
 def with_authenticated_identity(handler):
