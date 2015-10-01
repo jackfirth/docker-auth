@@ -21,7 +21,8 @@
       (check-delete "database" "Bad idea!")
       (check-post "post-test" #"foo" "POSTed payload: foo")
       (check-put "put-test" #"foo" "PUTed payload: foo")
-      (check-get "query-string-test?foo=bar" "Query param: bar")))
+      (check-get "query-string-test?foo=bar" "Query param: bar")
+      (check-get "identity-test" "No identity header")))
   (sleep 5)
   (test-case "Auth requests"
     (with-requester auth-requester
@@ -29,4 +30,5 @@
       (check-delete "database" "Bad idea!")
       (check-post "post-test" #"foo" "POSTed payload: foo")
       (check-put "put-test" #"foo" "PUTed payload: foo")
-      (check-get "query-string-test?foo=bar" "Query param: bar"))))
+      (check-get "query-string-test?foo=bar" "Query param: bar")
+      (check-get "identity-test" "Identity header: Email foo@bar.com"))))
