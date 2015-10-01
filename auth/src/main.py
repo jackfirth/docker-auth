@@ -6,7 +6,7 @@ from proxy import \
     proxy_route, \
     proxy_request, \
     proxy_request_with_body
-from authenticate import with_authenticated_identity
+from auth import with_authenticated_identity
 from db import initialize_database, create_user
 from pyramda import getattr, getitem, compose
 
