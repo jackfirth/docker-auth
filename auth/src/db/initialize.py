@@ -4,6 +4,7 @@ from sqlalchemy.exc import OperationalError
 from .model import UserAuth, create_tables
 from .session import with_session
 from .create_model import create_model
+from .crypto import encrypt
 
 
 def with_repeat_on_error(exn_type, num_times, retryable_func):
@@ -21,7 +22,7 @@ create_user_auth = create_model(UserAuth)
 def seed_user():
     with_session(create_user_auth({
         "email": "foo@bar.com",
-        "password": "password"
+        "password": encrypt("password")
     }))
 
 

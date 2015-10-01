@@ -1,6 +1,7 @@
 from pyramda import curry, compose
 from .session import with_session
 from .model import UserAuth
+from .crypto import verify
 
 
 @curry
@@ -31,11 +32,7 @@ def is_valid_user_email_and_password(user_email, password):
         maybe_dump_model,
         maybe_user_auth(user_email)
     ))
-    return maybe_user_auth_data and correct_password(
-        maybe_user_auth_data,
-        password
+    return maybe_user_auth_data and verify(
+        password,
+        maybe_user_auth_data["password"]
     )
-
-
-def correct_password(user_auth_data, password):
-    return user_auth_data["password"] == password
