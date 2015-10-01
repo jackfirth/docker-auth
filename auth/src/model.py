@@ -1,10 +1,13 @@
+from time import sleep
+from sys import stdout
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import MetaData, Column, Integer, String
 from sqlalchemy.exc import OperationalError
 from config import DB_SCHEMA
-from time import sleep
 from engine import engine
-from sys import stdout
+from session import with_session
+from create_model import create_model
+
 
 meta = MetaData(schema=DB_SCHEMA)
 Base = declarative_base(metadata=meta)
@@ -30,6 +33,16 @@ def with_repeat_on_error(exn_type, num_times, retryable_func):
                 raise
 
 
+create_user_auth = create_model(UserAuth)
+
+
+def seed_user():
+    with_session(create_user_auth({
+        "email": "foo@bar.com",
+        "password": "password"
+    }))
+
+
 def initialize_database():
     print("Initializing database")
 
@@ -38,6 +51,10 @@ def initialize_database():
         stdout.flush()
         sleep(num_times_tried + 1)
         create_tables()
-        print("Succesfully connected, tables initialized")
+        print("Succesfully connected, schema initialized")
         stdout.flush()
+
     with_repeat_on_error(OperationalError, 4, create_tables_with_sleep)
+    seed_user()
+    print("Successfully seeded, database initialized")
+    stdout.flush()
