@@ -22,11 +22,20 @@
 (get "/query-string-test" (lambda (req)
   (string-append "Query param: " (params req 'foo))))
 
-(get "/identity-test" (lambda (req)
-  (define identity (headers-assq* #"Identity" (request-headers/raw req)))
-  (if identity
-      (string-append "Identity header: " (bytes->string/utf-8 (header-value identity)))
-      (string-append "No identity header"))))
+(define ((header-test-route header-name) req)
+  (define header-name/bytes (string->bytes/utf-8 header-name))
+  (define header (headers-assq* header-name/bytes (request-headers/raw req)))
+  (if header
+      (format "~a header: ~a"
+              header-name
+              (bytes->string/utf-8 (header-value header)))
+      (format "No ~a header"
+              header-name)))
+
+
+(get "/identity-test" (header-test-route "Identity"))
+(get "/content-type-test" (header-test-route "Content-Type"))
+(get "/accept-test" (header-test-route "Accept"))
 
 (module+ main
   (run #:listen-ip #f))

@@ -30,7 +30,13 @@ def signup():
 def catch_all(path):
     def forward_request_as_identity(identity):
         target_url = target_service_url(path)
-        new_headers = {"Identity": identity}
+        new_headers = {
+            "Identity": identity
+        }
+        if "Content-Type" in request.headers:
+            new_headers["Content-Type"] = request.headers["Content-Type"]
+        if "Accept" in request.headers:
+            new_headers["Accept"] = request.headers["Accept"]
         auth_request = proxy_request(target_url, new_headers)
         auth_request_with_body = proxy_request_with_body(
             target_url,

@@ -6,7 +6,6 @@
          "config.rkt")
 
 
-
 (module+ test
   (test-case "Backend requests - no auth"
     (with-requester backend-requester
@@ -15,7 +14,7 @@
       (check-post "post-test" #"foo" "POSTed payload: foo")
       (check-put "put-test" #"foo" "PUTed payload: foo")
       (check-get "query-string-test?foo=bar" "Query param: bar")
-      (check-get "identity-test" "No identity header")))
+      (check-get "identity-test" "No Identity header")))
   (sleep 5)
   (test-case "Auth signup"
     (with-requester auth-api-requester
@@ -27,7 +26,10 @@
       (check-post "post-test" #"foo" "POSTed payload: foo")
       (check-put "put-test" #"foo" "PUTed payload: foo")
       (check-get "query-string-test?foo=bar" "Query param: bar")
-      (check-get "identity-test" "Identity header: Email foo@bar.com")))
+      (check-get "identity-test" "Identity header: Email foo@bar.com"))
+    (with-requester (json-headers-requester auth-proxy-requester/basic)
+      (check-get "content-type-test" "Content-Type header: application/json")
+      (check-get "accept-test" "Accept header: application/json")))
   (test-case "JWT auth requests"
     (with-requester auth-proxy-requester/jwt
       (check-get "" "Hello!")
@@ -35,4 +37,7 @@
       (check-post "post-test" #"foo" "POSTed payload: foo")
       (check-put "put-test" #"foo" "PUTed payload: foo")
       (check-get "query-string-test?foo=bar" "Query param: bar")
-      (check-get "identity-test" "Identity header: Email foo@bar.com"))))
+      (check-get "identity-test" "Identity header: Email foo@bar.com"))
+    (with-requester (json-headers-requester auth-proxy-requester/jwt)
+      (check-get "content-type-test" "Content-Type header: application/json")
+      (check-get "accept-test" "Accept header: application/json"))))
