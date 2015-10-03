@@ -1,28 +1,69 @@
-from os import environ
+from pyramda import identity, compose
+from env import default_environ, required_environ, pred_environ
 
 
-required_var_msg_format = "No value for required environment variable {0}"
-optional_var_msg_format = \
-    "No value for optional environment variable {0}, default to {1}"
+default_hash_algoirthm = "pbkdf2_sha512"
+allowed_hash_algorithms = [
+    default_hash_algoirthm
+]
 
 
-def checked_environ(var_name):
-    if var_name not in environ:
-        raise EnvironmentError(required_var_message_format % var_name)
-    return environ[var_name]
+def is_hash_alg(v):
+    return v in allowed_hash_algorithms
 
 
-def default_environ(default_value, var_name):
-    if var_name not in environ:
-        print(optional_var_msg_format.format(var_name, default_value))
-        return default_value
-    return environ[var_name]
+def is_int_string(v):
+    if not isinstance(v, str):
+        return False
+    try:
+        int(v)
+        return True
+    except ValueError:
+        return False
 
-TARGET_SERVICE_HOST = checked_environ("TARGET_SERVICE_HOST")
-DEBUG_MODE = checked_environ("DEBUG_MODE") == "true"
-DB_USER = checked_environ("DB_USER")
-DB_PASSWORD = checked_environ("DB_PASSWORD")
-DB_HOST = checked_environ("DB_HOST")
-DB_SCHEMA = checked_environ("DB_SCHEMA")
-JWT_SECRET = checked_environ("JWT_SECRET")
-HASH_ROUNDS = default_environ(40000, "HASH_ROUNDS")
+
+def is_bool_string(v):
+    return v == "true" or v == "false"
+
+
+def bool_string_to_bool(bool_string):
+    return bool_string == "true"
+
+
+int_string_environ = pred_environ(
+    is_int_string,
+    int,
+    "an integer"
+)
+
+bool_string_environ = pred_environ(
+    is_bool_string,
+    bool_string_to_bool,
+    "either 'true' or 'false'"
+)
+
+hash_alg_environ = pred_environ(
+    is_hash_alg,
+    identity,
+    "one of {0}" % allowed_hash_algorithms
+)
+
+default_hash_alg_environ = compose(
+    hash_alg_environ,
+    default_environ(default_hash_algoirthm)
+)
+
+default_hash_rounds_environ = compose(
+    int_string_environ,
+    default_environ("40000")
+)
+
+TARGET_SERVICE_HOST = required_environ("TARGET_SERVICE_HOST").value
+DB_USER = required_environ("DB_USER").value
+DB_PASSWORD = required_environ("DB_PASSWORD").value
+DB_HOST = required_environ("DB_HOST").value
+DB_SCHEMA = required_environ("DB_SCHEMA").value
+JWT_SECRET = required_environ("JWT_SECRET").value
+HASH_ROUNDS = default_hash_rounds_environ("HASH_ROUNDS").value
+HASH_ALGORITHM = default_hash_alg_environ("HASH_ALGORITHM").value
+DEBUG_MODE = bool_string_environ(required_environ("DEBUG_MODE")).value
