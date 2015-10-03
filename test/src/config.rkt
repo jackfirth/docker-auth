@@ -7,4 +7,5 @@
   backend-service-domain
   test-jwt
   test-password
-  short-test-password)
+  short-test-password
+  bad-chars-test-password)
