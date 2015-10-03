@@ -26,7 +26,7 @@ auth:
     DB_HOST: db
     DB_SCHEMA: authentication
     TARGET_SERVICE_HOST: backend:8000
-    DEBUG_MODE: true
+    DEBUG_MODE: "true"
     JWT_SECRET: secret
   ports:
     - "8000:8000"

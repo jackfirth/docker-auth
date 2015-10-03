@@ -63,4 +63,4 @@ get_request_password = compose(getitem("password"), request_json)
 
 if __name__ == "__main__":
     initialize_database()
-    app.run(host='0.0.0.0', port=8000, debug=True, use_reloader=False)
+    app.run(host='0.0.0.0', port=8000, debug=DEBUG_MODE, use_reloader=False)
