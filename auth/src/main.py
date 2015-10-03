@@ -1,7 +1,12 @@
 from flask import Flask
 from flask import request
 from requests import get, put, post, delete, patch
-from config import TARGET_SERVICE_HOST, DEBUG_MODE, MIN_PASSWORD_LENGTH
+from config import \
+    TARGET_SERVICE_HOST, \
+    DEBUG_MODE, \
+    MIN_PASSWORD_LENGTH, \
+    PASSWORD_CHAR_SET, \
+    PASSWORD_CHAR_SET_NAME
 from proxy import \
     proxy_route, \
     proxy_request, \
@@ -17,6 +22,15 @@ def target_service_url(path):
     return "http://" + TARGET_SERVICE_HOST + "/" + path
 
 
+def has_disallowed_chars(password):
+    if PASSWORD_CHAR_SET is None:
+        return False
+    for char in password:
+        if char not in PASSWORD_CHAR_SET:
+            return True
+    return False
+
+
 @app.route("/auth/signup", methods=["POST"])
 def signup():
     app.logger.info("Signing up new user")
@@ -27,11 +41,18 @@ def signup():
             "User {0}'s provided password was too short ({1} chars)".format(
                 user_email,
                 len(password)
-            ))
+            )
+        )
         return "Password too short, has length {0} but minimum is {1}".format(
             len(password),
             MIN_PASSWORD_LENGTH
         ), 400
+    if has_disallowed_chars(password):
+        log_format = "User {0}'s provided password has disallowed characters"
+        app.logger.info(log_format.format(user_email))
+        msg_format = \
+            "Password contains disallowed characters, only {0} supported"
+        return msg_format.format(PASSWORD_CHAR_SET_NAME), 400
     create_user(user_email, password)
     return ""
 

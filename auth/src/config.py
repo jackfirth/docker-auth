@@ -63,6 +63,8 @@ min_password_length_environ = compose(
     default_environ("12")
 )
 
+password_char_set_environ = default_environ(None)
+
 TARGET_SERVICE_HOST = required_environ("TARGET_SERVICE_HOST").value
 DB_USER = required_environ("DB_USER").value
 DB_PASSWORD = required_environ("DB_PASSWORD").value
@@ -73,3 +75,8 @@ HASH_ROUNDS = default_hash_rounds_environ("HASH_ROUNDS").value
 HASH_ALGORITHM = default_hash_alg_environ("HASH_ALGORITHM").value
 DEBUG_MODE = bool_string_environ(required_environ("DEBUG_MODE")).value
 MIN_PASSWORD_LENGTH = min_password_length_environ("MIN_PASSWORD_LENGTH").value
+PASSWORD_CHAR_SET = password_char_set_environ("PASSWORD_CHAR_SET").value
+PASSWORD_CHAR_SET_NAME = default_environ(
+    PASSWORD_CHAR_SET,
+    "PASSWORD_CHAR_SET_NAME"
+).value
