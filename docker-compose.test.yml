@@ -8,6 +8,8 @@ sut:
     AUTH_SERVICE_DOMAIN: auth:8000
     BACKEND_SERVICE_DOMAIN: backend:8000
     TEST_JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZW1haWwiOiJmb29AYmFyLmNvbSJ9.bgSB8w3HW-LIDllCIOVedS9U3yr9AlWSuhEDgGvulpM
+    TEST_PASSWORD: longgggpassword
+    SHORT_TEST_PASSWORD: short
 
 db:
   build: ./db
@@ -28,6 +30,7 @@ auth:
     TARGET_SERVICE_HOST: backend:8000
     DEBUG_MODE: "true"
     JWT_SECRET: secret
+    MIN_PASSWORD_LENGTH: 15
   ports:
     - "8000:8000"
 

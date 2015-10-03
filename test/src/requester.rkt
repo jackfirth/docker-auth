@@ -26,7 +26,7 @@
                          http-requester/exn))
 
 (define auth-proxy-requester/basic
-  (add-requester-headers '("Authorization: Basic foo@bar.com:password")
+  (add-requester-headers (list (string-append "Authorization: Basic foo@bar.com:" test-password))
                          auth-base-requester))
 
 (define auth-proxy-requester/jwt

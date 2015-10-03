@@ -1,6 +1,7 @@
 #lang racket
 
-(require rackunit
+(require fancy-app
+         rackunit
          request/check
          "requester.rkt"
          "config.rkt")
@@ -18,7 +19,8 @@
   (sleep 5)
   (test-case "Auth signup"
     (with-requester auth-api-requester
-      (check-post-not-exn "signup" (hash 'email "foo@bar.com" 'password "password"))))
+      (check-post-not-exn "signup" (hash 'email "foo@bar.com" 'password test-password))
+      (check-post-exn (http-exn-of-code? 400 _) "signup" (hash 'email "foo@bar.com" 'password short-test-password))))
   (test-case "Basic auth requests"
     (with-requester auth-proxy-requester/basic
       (check-get "" "Hello!")

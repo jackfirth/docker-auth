@@ -58,6 +58,11 @@ default_hash_rounds_environ = compose(
     default_environ("40000")
 )
 
+min_password_length_environ = compose(
+    int_string_environ,
+    default_environ("12")
+)
+
 TARGET_SERVICE_HOST = required_environ("TARGET_SERVICE_HOST").value
 DB_USER = required_environ("DB_USER").value
 DB_PASSWORD = required_environ("DB_PASSWORD").value
@@ -67,3 +72,4 @@ JWT_SECRET = required_environ("JWT_SECRET").value
 HASH_ROUNDS = default_hash_rounds_environ("HASH_ROUNDS").value
 HASH_ALGORITHM = default_hash_alg_environ("HASH_ALGORITHM").value
 DEBUG_MODE = bool_string_environ(required_environ("DEBUG_MODE")).value
+MIN_PASSWORD_LENGTH = min_password_length_environ("MIN_PASSWORD_LENGTH").value

@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import request
 from requests import get, put, post, delete, patch
-from config import TARGET_SERVICE_HOST, DEBUG_MODE
+from config import TARGET_SERVICE_HOST, DEBUG_MODE, MIN_PASSWORD_LENGTH
 from proxy import \
     proxy_route, \
     proxy_request, \
@@ -22,6 +22,16 @@ def signup():
     app.logger.info("Signing up new user")
     user_email = get_request_email(request)
     password = get_request_password(request)
+    if len(password) < MIN_PASSWORD_LENGTH:
+        app.logger.info(
+            "User {0}'s provided password was too short ({1} chars)".format(
+                user_email,
+                len(password)
+            ))
+        return "Password too short, has length {0} but minimum is {1}".format(
+            len(password),
+            MIN_PASSWORD_LENGTH
+        ), 400
     create_user(user_email, password)
     return ""
 
